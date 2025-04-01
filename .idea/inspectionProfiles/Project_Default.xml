@@ -1,0 +1,75 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myValues">
+        <value>
+          <list size="2">
+            <item index="0" class="java.lang.String" itemvalue="flex" />
+            <item index="1" class="java.lang.String" itemvalue="width" />
+          </list>
+        </value>
+      </option>
+      <option name="myCustomValuesEnabled" value="true" />
+    </inspection_tool>
+    <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="E111" />
+          <option value="W292" />
+          <option value="E225" />
+          <option value="E302" />
+          <option value="E305" />
+          <option value="E114" />
+          <option value="E303" />
+          <option value="W191" />
+          <option value="E128" />
+          <option value="E231" />
+          <option value="E221" />
+          <option value="E202" />
+          <option value="E201" />
+          <option value="W605" />
+          <option value="E117" />
+          <option value="E306" />
+          <option value="W391" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="N806" />
+          <option value="N801" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="django.conf.project_template.manage" />
+          <option value="main.now" />
+          <option value="index.now" />
+          <option value="path" />
+          <option value="main.c" />
+          <option value="sqlite3.dbapi2.Cursor.commit" />
+          <option value="shopping.views" />
+          <option value="tkinter.mes" />
+          <option value="debug_toolbar" />
+          <option value="beginner.ºc" />
+          <option value="main.A" />
+          <option value="main.B" />
+          <option value="main.*" />
+          <option value="django.conf.urls.defaults" />
+          <option value="bookshop.urls.patterns" />
+          <option value="list.add" />
+          <option value="newfletapp.img" />
+          <option value="app.GET" />
+          <option value="app.POST" />
+          <option value="app.flask_sqlalchemy" />
+          <option value="int.*" />
+          <option value="dogClass.Dog.*" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

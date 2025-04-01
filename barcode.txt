@@ -1,0 +1,132 @@
+import sqlite3
+from _datetime import datetime
+from tkinter import *
+from tkinter import messagebox, ttk
+
+import tkinter as tk
+
+conn = sqlite3.connect('shop_sys_db')
+cursor = conn.cursor()
+
+
+# Initialize Database
+def init_db():
+    conn = sqlite3.connect('shop.db')
+    cursor = conn.cursor()
+
+    # Create tables with barcode
+    cursor.execute('''CREATE TABLE IF NOT EXISTS products
+                    (product_id INTEGER PRIMARY KEY, name TEXT, price REAL, stock INTEGER, barcode TEXT)''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS sales
+                    (sale_id INTEGER PRIMARY KEY, product_id INTEGER, customer_id INTEGER, quantity INTEGER, sale_date TEXT,
+                    FOREIGN KEY(product_id) REFERENCES products(product_id),
+                    FOREIGN KEY(customer_id) REFERENCES customers(customer_id))''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS customers
+                    (customer_id INTEGER PRIMARY KEY, name TEXT, email TEXT)''')
+    conn.commit()
+    conn.close()
+
+
+# Adding a Product
+def add_product(name, price, stock, barcode):
+    conn = sqlite3.connect('shop.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO products (name, price, stock, barcode) VALUES (?, ?, ?, ?)', (name, price, stock, barcode))
+    conn.commit()
+    conn.close()
+
+
+# Fetching all products
+def fetch_products():
+    conn = sqlite3.connect('shop.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM products')
+    products = cursor.fetchall()
+    conn.close()
+    return products
+
+
+# Sale Processing
+def process_sale(product_id, quantity, customer_id):
+    conn = sqlite3.connect('shop.db')
+    cursor = conn.cursor()
+
+    # Reduce stock
+    cursor.execute('SELECT stock FROM products WHERE product_id = ?', (product_id,))
+    stock = cursor.fetchone()[0]
+
+    if stock >= quantity:
+        new_stock = stock - quantity
+        cursor.execute('UPDATE products SET stock = ? WHERE product_id = ?', (new_stock, product_id))
+
+        # Record sale
+        sale_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        cursor.execute('INSERT INTO sales (product_id, customer_id, quantity, sale_date) VALUES (?, ?, ?, ?)',
+                       (product_id, customer_id, quantity, sale_date))
+        conn.commit()
+        messagebox.showinfo("Success", "Sale processed successfully!")
+    else:
+        messagebox.showerror("Error", "Not enough stock available!")
+
+    conn.close()
+
+
+# Initialize Database
+init_db()
+
+
+class ShopApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Retail Shop Management System")
+        self.root.geometry("1270x900")
+        self.root.config(bg="#f8f9fa")
+
+        # Title
+        title = Label(root, text="Retail Shop Management System", font=("Arial", 24, "bold"), bg="#007bff", fg="white",
+                      pady=10)
+        title.pack(fill=X)
+
+        # Form Frame for adding products
+        form_frame = Frame(root, padx=40, pady=40, bg="#f8f9fa", bd=3, relief=SOLID)
+        form_frame.pack(pady=40)
+
+        # Product Name
+        self.name_label = Label(form_frame, text="Product Name", font=("Arial", 20, "bold"), bg="#f8f9fa", fg="#343a40")
+        self.name_label.grid(row=0, column=0, padx=30, pady=20, sticky=W)
+        self.name_entry = Entry(form_frame, font=("Arial", 20), bd=3, relief=SOLID, bg="white", fg="black", width=25)
+        self.name_entry.grid(row=0, column=1, padx=30, pady=20)
+
+        # Price
+        self.price_label = Label(form_frame, text="Price", font=("Arial", 20, "bold"), bg="#f8f9fa", fg="#343a40")
+        self.price_label.grid(row=1, column=0, padx=30, pady=20, sticky=W)
+        self.price_entry = Entry(form_frame, font=("Arial", 20), bd=3, relief=SOLID, bg="white", fg="black", width=25)
+        self.price_entry.grid(row=1, column=1, padx=30, pady=20)
+
+        # Stock
+        self.stock_label = Label(form_frame, text="Stock", font=("Arial", 20, "bold"), bg="#f8f9fa", fg="#343a40")
+        self.stock_label.grid(row=2, column=0, padx=30, pady=20, sticky=W)
+        self.stock_entry = Entry(form_frame, font=("Arial", 20), bd=3, relief=SOLID, bg="white", fg="black", width=25)
+        self.stock_entry.grid(row=2, column=1, padx=30, pady=20)
+
+        # Barcode
+        self.barcode_label = Label(form_frame, text="Barcode", font=("Arial", 20, "bold"), bg="#f8f9fa", fg="#343a40")
+        self.barcode_label.grid(row=3, column=0, padx=30, pady=20, sticky=W)
+        self.barcode_entry = Entry(form_frame, font=("Arial", 20), bd=3, relief=SOLID, bg="white", fg="black", width=25)
+        self.barcode_entry.grid(row=3, column=1, padx=30, pady=20)
+
+        # Add Product Button
+        self.add_button = Button(form_frame, text="Add Product", font=("Arial", 18, "bold"), bg="#28a745", fg="black",
+                                 bd=0, relief=FLAT, padx=20, pady=15, cursor="hand", command=self.add_product)
+        self.add_button.grid(row=4, column=0, columnspan=2, pady=20)
+
+        # Product List Section
+        self.product_list_label = Label(self.root, text="Product List", font=("Helvetica Neue", 28, "bold"),
+                                        bg="#007bff", fg="white", pady=10)
+        self.product_list_label.pack(fill=BOTH)
+
+        # Frame for the product list with rounded corners
+        self.product_list_frame = Frame(self.root, bg="#ffffff", padx=20, pady=20, bd=5, relief=SOLID)
+        self.product_list_frame.pack(pady=20)
+
+        # Listbox for displaying products with improved styling
